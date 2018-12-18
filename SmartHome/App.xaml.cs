@@ -7,6 +7,8 @@ using Prism.Ioc;
 using SmartHome.ViewModels;
 using System.Threading.Tasks;
 using Prism;
+using Autofac;
+using SmartHome.Services.Network;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace SmartHome
@@ -53,6 +55,7 @@ namespace SmartHome
 		{
 			var builder = containerRegistry.GetBuilder();
 
+			builder.RegisterType<SengledClient>().As<ISengledClient>();
 			containerRegistry.RegisterForNavigation<MainPage>();
 		}
 

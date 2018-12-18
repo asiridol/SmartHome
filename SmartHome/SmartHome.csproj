@@ -12,13 +12,17 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="3.3.0.967583" />
     <PackageReference Include="Prism.Autofac.Forms" Version="7.1.0.431" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Images\" />
     <Folder Include="Services\" />
-    <Folder Include="Services\ViewModelLocator\" />
+    <Folder Include="Services\Network\" />
+    <Folder Include="Services\Network\Base\" />
+    <Folder Include="Services\Network\Models\" />
+    <Folder Include="Services\SmartLightService\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="BootloaderBase.cs" />

@@ -95,6 +95,9 @@
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Network\IosHttpClientFactory.cs" />
+    <Compile Include="IosPlatformInitializer.cs" />
+    <Compile Include="CustomRenderers\ProgressAwarePageRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -146,6 +149,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="3.3.0.967583" />
@@ -156,5 +160,10 @@
       <Project>{C91494B8-1E50-4FC9-8C58-F2A69A13AF56}</Project>
       <Name>SmartHome</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Services\Network\" />
+    <Folder Include="CustomRenderers\" />
   </ItemGroup>
 </Project>
