@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Autofac;assembly=Prism.Autofac.Forms" x:Class="SmartHome.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="LabelColor">#B20000</Color>
+            <Color x:Key="TextColor">#000000</Color>
+            <Color x:Key="BackgroundColor">#dfdfdf</Color>
+            <Color x:Key="ButtonBackgroundColor">#B20000</Color>
+            <Color x:Key="ButtonTextColor">#FFFFFF</Color>
+           <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{ StaticResource LabelColor }"/>
+           </Style>
+           <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="{ StaticResource TextColor }"/>
+           </Style>
+           <Style TargetType="Button">
+                <Setter Property="TextColor" Value="{ StaticResource ButtonTextColor }"/>
+                <Setter Property="BackgroundColor" Value="{ StaticResource ButtonBackgroundColor }"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</prism:PrismApplication>

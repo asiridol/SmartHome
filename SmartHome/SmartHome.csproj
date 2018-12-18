@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="3.3.0.967583" />
+    <PackageReference Include="Prism.Autofac.Forms" Version="7.1.0.431" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Images\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\ViewModelLocator\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="BootloaderBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Images\SengledLogo.pdf" />
+    <None Remove="Images\SengledLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\SengledLogo.pdf" />
+    <EmbeddedResource Include="Images\SengledLogo.png" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" FileWidth="80" TabsToSpaces="True" scope="application/xaml+xml" />
+          <XmlFormattingPolicy scope="application/xaml+xml">
+            <DefaultFormat AttributesInNewLine="True" MaxAttributesPerLine="1" AlignAttributes="True" />
+          </XmlFormattingPolicy>
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
