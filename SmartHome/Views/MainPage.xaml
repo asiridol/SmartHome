@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<local:ViewModelPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:SmartHome.Views;assembly:SmartHome" x:Class="SmartHome.Views.MainPage" x:TypeArguments="vm:MainPageViewModel" xmlns:vm="clr-namespace:SmartHome.ViewModels;assembly=SmartHome">
+<local:ViewModelPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:local="clr-namespace:SmartHome.Views;assembly:SmartHome" 
+    x:Class="SmartHome.Views.MainPage" x:TypeArguments="vm:MainPageViewModel" 
+    xmlns:vm="clr-namespace:SmartHome.ViewModels;assembly=SmartHome"
+    ShowProgress="{Binding Progress}">
     <StackLayout>
         <!-- Place new controls here -->
     <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">

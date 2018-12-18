@@ -5,7 +5,7 @@ using Prism.Ioc;
 
 namespace SmartHome.Views
 {
-	public class ViewModelPage<T> : ContentPage where T : ViewModelBase
+	public class ViewModelPage<T> : ProgressAwarePage where T : ViewModelBase
 	{
 		private T _viewModel;
 
