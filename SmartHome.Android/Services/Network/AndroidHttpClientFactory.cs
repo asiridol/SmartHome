@@ -9,7 +9,7 @@ namespace SmartHome.Droid.Services.Network
 	{
 		protected override HttpMessageHandler GetClientHandler()
 		{
-			return new AndroidClientHandler();
+			return new AndroidClientHandler() { UseCookies = false, CookieContainer = null };
 		}
 	}
 }

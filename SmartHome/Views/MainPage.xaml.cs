@@ -8,9 +8,9 @@ using SmartHome.ViewModels;
 
 namespace SmartHome.Views
 {
-	public partial class MainPage : ViewModelPage<MainPageViewModel>
+	public partial class LoginPage : ViewModelPage<LoginViewModel>
 	{
-		public MainPage()
+		public LoginPage()
 		{
 			InitializeComponent();
 		}

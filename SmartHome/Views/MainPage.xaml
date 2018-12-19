@@ -5,12 +5,12 @@
     xmlns:local="clr-namespace:SmartHome.Views;assembly:SmartHome" 
     xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls"
     xmlns:vm="clr-namespace:SmartHome.ViewModels;assembly=SmartHome"
-    x:Class="SmartHome.Views.MainPage" x:TypeArguments="vm:MainPageViewModel" 
+    x:Class="SmartHome.Views.LoginPage" x:TypeArguments="vm:LoginViewModel" 
     ShowProgress="{Binding IsBusy}">
     <StackLayout>
         <!-- Place new controls here -->
     <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-        <StackLayout VerticalOptions="CenterAndExpand" Padding="20">
+        <StackLayout VerticalOptions="Center" Padding="20">
             <Image HorizontalOptions="Center" Margin="20" Aspect="AspectFill"  HeightRequest="100" Source="SengledLogo.png" />
             <xfx:XfxEntry Placeholder="Email address" VerticalOptions="Start" HorizontalOptions="FillAndExpand" Keyboard="Email" Text="{Binding UserName}" TextColor="Black" PlaceholderColor="#B20000" ActivePlaceholderColor="#B20000" />
             <xfx:XfxEntry Placeholder="Password" VerticalOptions="Start" HorizontalOptions="FillAndExpand" IsPassword="true" Text="{Binding Password}" TextColor="Black" PlaceholderColor="#B20000" ActivePlaceholderColor="#B20000" />

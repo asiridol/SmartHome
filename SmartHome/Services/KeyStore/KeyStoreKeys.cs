@@ -3,6 +3,7 @@ namespace SmartHome.Services.KeyStore
 {
 	public enum KeyStoreKeys
 	{
-		JSessionId
+		JSessionId,
+		UniqueDeviceId
 	}
 }

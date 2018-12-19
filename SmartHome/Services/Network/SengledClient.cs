@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SmartHome.Services.Network.Models;
 using SmartHome.Services.Network.Base;
 using System.Net.Http;
+using System.Collections.Generic;
 
 namespace SmartHome.Services.Network
 {
@@ -13,16 +14,18 @@ namespace SmartHome.Services.Network
 		private const string IsSessionTimeoutUrl = "https://ucenter.cloud.sengled.com/user/app/customer/isSessionTimeout.json";
 		private const string DevicesListUrl = "https://life2.cloud.sengled.com/life2/device/list.json";
 
+		private const string CookieHeaderKey = "Cookie";
+		private const string JSessionHeaderValue = "JSESSIONID={0}";
+
 		private const string ProductAndAppId = "life";
 
-		public Task<string> AuthenticateClientAsync(string name, string password)
+		public Task<string> AuthenticateClientAsync(string name, string password, string guid)
 		{
-			return AuthenticateClientAsync(name, password, CancellationToken.None);
+			return AuthenticateClientAsync(name, password, guid, CancellationToken.None);
 		}
 
-		public async Task<string> AuthenticateClientAsync(string name, string password, CancellationToken token)
+		public async Task<string> AuthenticateClientAsync(string name, string password, string guid, CancellationToken token)
 		{
-			var guid = Guid.NewGuid().ToString("N").Substring(0, 16);
 			var requestBody = new AuthenticationRequest
 			{
 				User = name,
@@ -38,21 +41,24 @@ namespace SmartHome.Services.Network
 			return response.JsonPropertysessionId;
 		}
 
-		public Task<bool> IsSessionTimeOutAsync()
+		public Task<bool> IsSessionTimeOutAsync(string sessionId, string guid)
 		{
-			return IsSessionTimeOutAsync(CancellationToken.None);
+			return IsSessionTimeOutAsync(sessionId, guid, CancellationToken.None);
 		}
 
-		public async Task<bool> IsSessionTimeOutAsync(CancellationToken token)
+		public async Task<bool> IsSessionTimeOutAsync(string sessionId, string guid, CancellationToken token)
 		{
 			var requestBody = new IsSessionTimeOutRequest
 			{
-				Uuid = Guid.NewGuid().ToString("N").Substring(0, 16),
+				Uuid = guid,
 				OsType = "android",
 				AppCode = ProductAndAppId
 			};
 
-			var request = new JsonRequest<IsSessionTimeOutResponse>(null) { Body = requestBody };
+			var headers = new Dictionary<string, string>();
+			headers.Add(CookieHeaderKey, string.Format(JSessionHeaderValue, sessionId));
+
+			var request = new JsonRequest<IsSessionTimeOutResponse>(headers) { Body = requestBody };
 			var response = await request.SendRequestAsync(HttpMethod.Post, new Uri(IsSessionTimeoutUrl), token);
 			return response.StatusCode == System.Net.HttpStatusCode.OK;
 		}

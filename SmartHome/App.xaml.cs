@@ -21,16 +21,11 @@ namespace SmartHome
 
 		public App(IPlatformInitializer initializer) : base(initializer)
 		{
-			MainPage = new MainPage();
+			//MainPage = new NavigationPage(new LoginPage());
 		}
 
 		protected override async void OnInitialized()
 		{
-			if (Current.Resources == null)
-			{
-				Current.Resources = new ResourceDictionary();
-			}
-
 			InitializeComponent();
 
 			await NavigateToRootPageAsync();
@@ -55,20 +50,24 @@ namespace SmartHome
 		{
 			var builder = containerRegistry.GetBuilder();
 
+			builder.RegisterType<LoginViewModel>();
 			builder.RegisterType<SengledClient>().As<ISengledClient>();
-			containerRegistry.RegisterForNavigation<MainPage>();
+			containerRegistry.RegisterForNavigation<ContentPage>();
+			containerRegistry.RegisterForNavigation<LoginPage>();
 		}
 
 		private async Task NavigateToRootPageAsync()
 		{
-			if (Device.Idiom == TargetIdiom.Phone)
-			{
-				await NavigationService.NavigateAsync(nameof(NavigationPage) + "/" + nameof(MainPage));
-			}
-			else
-			{
-				await NavigationService.NavigateAsync("/" + nameof(MainPage));
-			}
+			//if (Device.Idiom == TargetIdiom.Phone)
+			//{
+			//	await NavigationService.NavigateAsync(nameof(NavigationPage) + "/" + nameof(LoginPage));
+			//}
+			//else
+			//{
+			//	await NavigationService.NavigateAsync("/" + nameof(LoginPage));
+			//}
+
+			await NavigationService.NavigateAsync("/" + nameof(LoginPage));
 		}
 	}
 }
