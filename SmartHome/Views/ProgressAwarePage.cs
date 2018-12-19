@@ -13,10 +13,6 @@ namespace SmartHome.Views
 			{
 				return (bool)GetValue(ShowProgressProperty);
 			}
-			set
-			{
-				SetValue(ShowProgressProperty, value);
-			}
 		}
 	}
 }

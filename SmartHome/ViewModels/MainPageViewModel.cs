@@ -6,10 +6,9 @@ using SmartHome.Services.Network;
 
 namespace SmartHome.ViewModels
 {
-	public class MainPageViewModel : ViewModelBase
+	public class MainPageViewModel : ProgressAwareViewModel
 	{
 		private readonly Lazy<ISengledClient> _sengledClient;
-		private bool _progress;
 
 		public MainPageViewModel(Lazy<ISengledClient> sengledClient)
 		{
@@ -28,37 +27,19 @@ namespace SmartHome.ViewModels
 			get; set;
 		}
 
-		public bool Progress
-		{
-			get
-			{
-				return _progress;
-			}
-			set
-			{
-				if (_progress == value)
-				{
-					return;
-				}
-
-				_progress = value;
-				RaisePropertyChanged(nameof(Progress));
-			}
-		}
-
 		public ICommand LoginCommand => _loginCommand ?? (_loginCommand = new Command(async () => await DoLoginCommandAsync()));
 
 		private async Task DoLoginCommandAsync()
 		{
 			try
 			{
-				Progress = true;
+				IsBusy = true;
 				await Task.Delay(TimeSpan.FromSeconds(10));
 				//await _sengledClient.Value.AuthenticateClientAsync(UserName, Password);
 			}
 			finally
 			{
-				Progress = false;
+				IsBusy = false;
 			}
 		}
 	}

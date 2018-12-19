@@ -4,6 +4,7 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
+using Xfx;
 
 namespace SmartHome.iOS
 {
@@ -22,6 +23,7 @@ namespace SmartHome.iOS
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
+			XfxControls.Init();
 			Xamarin.Forms.Forms.Init();
 			LoadApplication(new App(new IosPlatformInitializer()));
 

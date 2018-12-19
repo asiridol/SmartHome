@@ -16,9 +16,9 @@ namespace SmartHome.iOS.CustomRenderers
 		private const double FadeDuration = 0.2;
 
 		private UIActivityIndicatorView _progressView;
-
 		private ProgressAwarePage _currentPage;
 		private UIVisualEffectView _effectView;
+		private UILabel _pleaseWaitLabel;
 
 		private ProgressAwarePage CurrentPage
 		{
@@ -130,15 +130,22 @@ namespace SmartHome.iOS.CustomRenderers
 		{
 			_effectView = new UIVisualEffectView() { TranslatesAutoresizingMaskIntoConstraints = false };
 			_effectView.UserInteractionEnabled = false;
-			_effectView.BackgroundColor = UIColor.Red.ColorWithAlpha(0.2f);
+			_effectView.BackgroundColor = UIColor.FromRGB(68, 28, 28).ColorWithAlpha(0.3f);
 			//_effectView.BackgroundColor = UIColor.Red;
-			_effectView.Effect = UIBlurEffect.FromStyle(UIBlurEffectStyle.Dark);
+			_effectView.Effect = UIBlurEffect.FromStyle(UIBlurEffectStyle.ExtraLight);
 			_progressView = new UIActivityIndicatorView() { TranslatesAutoresizingMaskIntoConstraints = false };
 			_progressView.ActivityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge;
+			_progressView.Color = UIColor.FromRGB(178, 0, 0);
 			_progressView.UserInteractionEnabled = false;
 
-			_effectView.ContentView.AddSubview(_progressView);
+			_pleaseWaitLabel = new UILabel() { TranslatesAutoresizingMaskIntoConstraints = false };
+			_pleaseWaitLabel.Text = "Please wait...";
+			_pleaseWaitLabel.Font = UIFont.SystemFontOfSize(18f, UIFontWeight.Thin);
+			_pleaseWaitLabel.TextAlignment = UITextAlignment.Center;
+			_pleaseWaitLabel.TextColor = UIColor.FromRGB(178, 0, 0);
 
+			_effectView.ContentView.AddSubview(_progressView);
+			_effectView.ContentView.AddSubview(_pleaseWaitLabel);
 			View.AddSubview(_effectView);
 
 			var constraints = new[]
@@ -150,7 +157,10 @@ namespace SmartHome.iOS.CustomRenderers
 				_progressView.CenterXAnchor.ConstraintEqualTo(_effectView.CenterXAnchor),
 				_progressView.CenterYAnchor.ConstraintEqualTo(_effectView.CenterYAnchor),
 				_progressView.WidthAnchor.ConstraintEqualTo(100f),
-				_progressView.HeightAnchor.ConstraintEqualTo(_progressView.WidthAnchor)
+				_progressView.HeightAnchor.ConstraintEqualTo(_progressView.WidthAnchor),
+				_pleaseWaitLabel.CenterXAnchor.ConstraintEqualTo(_effectView.CenterXAnchor),
+				_pleaseWaitLabel.WidthAnchor.ConstraintEqualTo(_effectView.WidthAnchor),
+				_pleaseWaitLabel.TopAnchor.ConstraintEqualTo(_progressView.TopAnchor, 70f)
 			};
 
 			NSLayoutConstraint.ActivateConstraints(constraints);
@@ -162,6 +172,28 @@ namespace SmartHome.iOS.CustomRenderers
 			}
 
 			View.SetNeedsUpdateConstraints();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			InvokeOnMainThread(() =>
+			{
+				_progressView?.RemoveFromSuperview();
+				_progressView.Dispose();
+				_progressView = null;
+
+				_effectView?.RemoveFromSuperview();
+				_effectView.Dispose();
+				_effectView = null;
+
+				_pleaseWaitLabel?.RemoveFromSuperview();
+				_pleaseWaitLabel.Dispose();
+				_pleaseWaitLabel = null;
+			});
+
+			CurrentPage = null;
+
+			base.Dispose(disposing);
 		}
 	}
 }
