@@ -23,7 +23,7 @@
     <Folder Include="Services\Network\" />
     <Folder Include="Services\Network\Base\" />
     <Folder Include="Services\Network\Models\" />
-    <Folder Include="Services\SmartLightService\" />
+    <Folder Include="Services\KeyStore\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="BootloaderBase.cs" />

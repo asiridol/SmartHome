@@ -98,6 +98,8 @@
     <Compile Include="Services\Network\IosHttpClientFactory.cs" />
     <Compile Include="IosPlatformInitializer.cs" />
     <Compile Include="CustomRenderers\ProgressAwarePageRenderer.cs" />
+    <Compile Include="Services\KeyStore\IosKeyStore.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -168,6 +170,8 @@
     <Folder Include="Services\" />
     <Folder Include="Services\Network\" />
     <Folder Include="CustomRenderers\" />
+    <Folder Include="Services\KeyStore\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\SmartHome\Images\SengledLogo.png">
