@@ -1,32 +1,40 @@
 ﻿using System;
+using System.Threading.Tasks;
+using DryIoc;
+using Prism;
+using Prism.DryIoc;
+using Prism.Ioc;
+using SmartHome.Services.KeyStore;
+using SmartHome.Services.Network;
+using SmartHome.ViewModels;
+using SmartHome.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Prism.Autofac;
-using SmartHome.Views;
-using Prism.Ioc;
-using SmartHome.ViewModels;
-using System.Threading.Tasks;
-using Prism;
-using Autofac;
-using SmartHome.Services.Network;
+using System.Threading;
+using Prism.Navigation;
+using System.Linq;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace SmartHome
 {
 	public partial class App : PrismApplication
 	{
+		private int _threadLock;
+
 		public App() : this(null)
 		{
 		}
 
 		public App(IPlatformInitializer initializer) : base(initializer)
 		{
-			//MainPage = new NavigationPage(new LoginPage());
 		}
 
 		protected override async void OnInitialized()
 		{
 			InitializeComponent();
+
+			// long running process will crash the app
+			await NavigationService.NavigateAsync(nameof(LoadingPage));
 
 			await NavigateToRootPageAsync();
 		}
@@ -48,12 +56,15 @@ namespace SmartHome
 
 		protected override void RegisterTypes(IContainerRegistry containerRegistry)
 		{
-			var builder = containerRegistry.GetBuilder();
+			var container = containerRegistry.GetContainer();
 
-			builder.RegisterType<LoginViewModel>();
-			builder.RegisterType<SengledClient>().As<ISengledClient>();
-			containerRegistry.RegisterForNavigation<ContentPage>();
+			//container.RegisterType<LoginPageViewModel>();
+			container.Register<ISengledClient, SengledClient>();
+			containerRegistry.RegisterForNavigation<LoadingPage>();
 			containerRegistry.RegisterForNavigation<LoginPage>();
+			containerRegistry.RegisterForNavigation<MainPage>();
+			containerRegistry.Register<LoginPageViewModel>();
+			containerRegistry.Register<MainPageViewModel>();
 		}
 
 		private async Task NavigateToRootPageAsync()
@@ -67,7 +78,46 @@ namespace SmartHome
 			//	await NavigationService.NavigateAsync("/" + nameof(LoginPage));
 			//}
 
-			await NavigationService.NavigateAsync("/" + nameof(LoginPage));
+			if (Interlocked.CompareExchange(ref _threadLock, 0, 1) != 0)
+			{
+				// already in progress
+				return;
+			}
+
+			try
+			{
+				if (await IsLoggedInAsync())
+				{
+					await NavigationService.NavigateAsync("/" + nameof(Views.MainPage));
+				}
+				else
+				{
+					await NavigationService.NavigateAsync("/" + nameof(LoginPage));
+				}
+			}
+			finally
+			{
+
+				Interlocked.Exchange(ref _threadLock, 0);
+			}
+		}
+
+		private async Task<bool> IsLoggedInAsync()
+		{
+			//return false;
+			var keyStore = Container.Resolve<IKeyStore>();
+
+			var checkSessionTokenTask = Task.Run(async () =>
+			{
+				return !string.IsNullOrEmpty(await keyStore.GetValueForKeyAsync<string>(KeyStoreKeys.JSessionId));
+			});
+
+			var checkDeviceIdTask = Task.Run(async () =>
+			{
+				return !string.IsNullOrEmpty(await keyStore.GetValueForKeyAsync<string>(KeyStoreKeys.UniqueDeviceId));
+			});
+
+			return (await Task.WhenAll(checkSessionTokenTask, checkDeviceIdTask)).All(x => x);
 		}
 	}
 }

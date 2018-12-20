@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<local:ProgressAwarePage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:local="clr-namespace:SmartHome.Views;assembly:SmartHome" 
+    xmlns:behavior="clr-namespace:SmartHome.Behaviors;assembly:SmartHome" 
+    xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls"
+    xmlns:vm="clr-namespace:SmartHome.ViewModels;assembly=SmartHome"
+    xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true"
+    x:Class="SmartHome.Views.LoginPage"
+    prism:ViewModelLocator.AutowireViewModel="True"
+    ShowProgress="{Binding IsBusy}">
+    <StackLayout>
+        <!-- Place new controls here -->
+    <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <StackLayout VerticalOptions="Center" Padding="20">
+            <Image HorizontalOptions="Center" Margin="20" Aspect="AspectFill"  HeightRequest="100" Source="SengledLogo.png" />
+            <xfx:XfxEntry Placeholder="Email address" VerticalOptions="Start" HorizontalOptions="FillAndExpand" Keyboard="Email" Text="{Binding UserName}" TextColor="Black" PlaceholderColor="#B20000" ActivePlaceholderColor="#B20000" >
+                    <xfx:XfxEntry.Behaviors>
+                        <behavior:LowerCaseEntityBehavior/>
+                    </xfx:XfxEntry.Behaviors>
+                </xfx:XfxEntry>
+            <xfx:XfxEntry Placeholder="Password" VerticalOptions="Start" HorizontalOptions="FillAndExpand" IsPassword="true" Text="{Binding Password}" TextColor="Black" PlaceholderColor="#B20000" ActivePlaceholderColor="#B20000" />
+            <Button Text="Log in" VerticalOptions="Start" HorizontalOptions="FillAndExpand" Margin="0,30,0,30" Command="{Binding LoginCommand}" />
+        </StackLayout>
+    </ScrollView>
+    </StackLayout>
+</local:ProgressAwarePage>

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
+using SmartHome.Services.Network.Models;
+
 namespace SmartHome.Services.Network
 {
 	public interface ISengledClient
@@ -14,8 +16,8 @@ namespace SmartHome.Services.Network
 		Task GetUserInfoAsync();
 		Task GetUserInfoAsync(CancellationToken token);
 
-		Task GetDeviceDetailsAsync();
-		Task GetDeviceDetailsAsync(CancellationToken token);
+		Task<RoomsResponse> GetRoomsInfoAsync(string sessionId);
+		Task<RoomsResponse> GetRoomsInfoAsync(string sessionId, CancellationToken token);
 
 		Task GetDevicesListAsync();
 		Task GetDevicesListAsync(CancellationToken token);

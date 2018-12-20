@@ -3,51 +3,65 @@ using System.Threading.Tasks;
 using SmartHome.Services.KeyStore;
 using Foundation;
 using SmartHome.iOS.Extensions;
+using System.Collections.Generic;
+using UIKit;
 namespace SmartHome.iOS.Services.KeyStore
 {
 	public class IosKeyStore : AbstractKeyStore
 	{
 		public override Task ClearStoreAsync()
 		{
-			using (var nsUserDefaults = new NSUserDefaults())
+			return Task.Run(async () =>
 			{
-				nsUserDefaults.RemovePersistentDomain(NSBundle.MainBundle.BundleIdentifier);
-			}
-
-			return Task.CompletedTask;
+				var keys = Enum.GetValues(typeof(KeyStoreKeys));
+				foreach (var key in keys)
+				{
+					var keystoreKey = (KeyStoreKeys)key;
+					await SaveKeyValueAsync(keystoreKey, string.Empty);
+				}
+			});
 		}
 
 		protected override Task<string> GetStringValueForKey(string key)
 		{
-			var tcs = new TaskCompletionSource<string>();
-
-			using (var nsUserDefaults = new NSUserDefaults())
+			return Task.Run(async () =>
 			{
-				var saved = nsUserDefaults.ValueForKey(key.ToNSString())?.ToString();
-				tcs.TrySetResult(saved);
-			}
+				if (UIApplication.SharedApplication.Delegate is AppDelegate appDelegate)
+				{
+					await appDelegate.EnsureInitializedAsync();
+				}
 
-			return tcs.Task;
+				string saved = string.Empty;
+				try
+				{
+					saved = NSUserDefaults.StandardUserDefaults.StringForKey(key);
+				}
+				catch (Exception)
+				{
+					saved = string.Empty;
+				}
+
+				return saved;
+			});
 		}
 
 		protected override Task<bool> SaveKeyValueAsync(string key, string value)
 		{
-			var tcs = new TaskCompletionSource<bool>();
-
-			try
+			return Task.Run(() =>
 			{
-				using (var nsUserDefaults = new NSUserDefaults())
+				bool success = false;
+				try
 				{
-					nsUserDefaults.SetValueForKey(key.ToNSString(), value.ToNSString());
-					tcs.TrySetResult(true);
+					NSUserDefaults.StandardUserDefaults.SetString(value, key);
+					success = true;
 				}
-			}
-			catch (Exception)
-			{
-				tcs.TrySetResult(false);
-			}
+				catch (Exception ex)
+				{
+					success = false;
+				}
 
-			return tcs.Task;
+				return success;
+			});
 		}
 	}
 }

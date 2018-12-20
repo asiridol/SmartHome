@@ -4,18 +4,27 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using SmartHome.Services.Network;
 using SmartHome.Services.KeyStore;
+using Prism.Navigation;
+using SmartHome.Views;
+using Prism.Ioc;
+using System.Linq;
+using Prism.Services;
 
 namespace SmartHome.ViewModels
 {
-	public class LoginViewModel : ProgressAwareViewModel
+	public class LoginPageViewModel : ProgressAwareViewModel
 	{
 		private readonly Lazy<ISengledClient> _sengledClient;
 		private readonly Lazy<IKeyStore> _keyStore;
+		private readonly Lazy<INavigationService> _navigation;
+		private readonly Lazy<IPageDialogService> _dialogService;
 
-		public LoginViewModel(Lazy<ISengledClient> sengledClient, Lazy<IKeyStore> keyStore)
+		public LoginPageViewModel(Lazy<ISengledClient> sengledClient, Lazy<IKeyStore> keyStore, Lazy<INavigationService> navigation, Lazy<IPageDialogService> dialogService)
 		{
 			_sengledClient = sengledClient;
 			_keyStore = keyStore;
+			_navigation = navigation;
+			_dialogService = dialogService;
 		}
 
 		private ICommand _loginCommand;
@@ -34,6 +43,7 @@ namespace SmartHome.ViewModels
 
 		private async Task DoLoginCommandAsync()
 		{
+			bool success = false;
 			try
 			{
 				IsBusy = true;
@@ -48,12 +58,21 @@ namespace SmartHome.ViewModels
 						_keyStore.Value.SaveKeyValueAsync(KeyStoreKeys.JSessionId, sessionid),
 						_keyStore.Value.SaveKeyValueAsync(KeyStoreKeys.UniqueDeviceId, guid)
 					};
-					var success = await Task.WhenAll(tasks);
+
+					success = (await Task.WhenAll(tasks)).All(x => x);
 				}
 			}
 			finally
 			{
 				IsBusy = false;
+				if (success)
+				{
+					await _navigation.Value.NavigateAsync("/" + nameof(MainPage));
+				}
+				else
+				{
+					await _dialogService.Value.DisplayAlertAsync("Login error", "Check username and password", "OK");
+				}
 			}
 		}
 	}

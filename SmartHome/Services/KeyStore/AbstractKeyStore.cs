@@ -8,19 +8,18 @@ namespace SmartHome.Services.KeyStore
 	{
 		public async Task<T> GetValueForKeyAsync<T>(KeyStoreKeys key)
 		{
-			var stringValue = await GetStringValueForKey(key.ToString());
-
-			if (string.IsNullOrEmpty(stringValue))
-			{
-				return default(T);
-			}
-
 			try
 			{
+				var stringValue = await GetStringValueForKey(key.ToString());
+
+				if (string.IsNullOrEmpty(stringValue))
+				{
+					return default(T);
+				}
 				var deserialized = JsonConvert.DeserializeObject<T>(stringValue);
 				return deserialized;
 			}
-			catch (JsonException)
+			catch (Exception)
 			{
 			}
 

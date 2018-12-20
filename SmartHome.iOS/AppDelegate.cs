@@ -5,6 +5,8 @@ using System.Linq;
 using Foundation;
 using UIKit;
 using Xfx;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SmartHome.iOS
 {
@@ -21,13 +23,34 @@ namespace SmartHome.iOS
 		//
 		// You have 17 seconds to return from this method, or iOS will terminate your application.
 		//
+
+		private TaskCompletionSource<bool> _initializedCompletionSource;
+
+		public override bool WillFinishLaunching(UIApplication uiApplication, NSDictionary launchOptions)
+		{
+			_initializedCompletionSource = new TaskCompletionSource<bool>();
+			return base.WillFinishLaunching(uiApplication, launchOptions);
+		}
+
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
-			XfxControls.Init();
-			Xamarin.Forms.Forms.Init();
-			LoadApplication(new App(new IosPlatformInitializer()));
+			try
+			{
+				XfxControls.Init();
+				Xamarin.Forms.Forms.Init();
+				LoadApplication(new App(new IosPlatformInitializer()));
+			}
+			finally
+			{
+				_initializedCompletionSource.TrySetResult(true);
+			}
 
 			return base.FinishedLaunching(app, options);
+		}
+
+		public Task EnsureInitializedAsync()
+		{
+			return _initializedCompletionSource.Task;
 		}
 	}
 }
