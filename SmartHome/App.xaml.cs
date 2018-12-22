@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using DryIoc;
 using Prism;
@@ -60,11 +60,15 @@ namespace SmartHome
 
 			//container.RegisterType<LoginPageViewModel>();
 			container.Register<ISengledClient, SengledClient>();
+			container.Register<IObjectBlobCache, RealmBackedCacheStore>(setup: Setup.With(allowDisposableTransient: true));
+			container.Register<ISmartLightCache, SmartLightCache>();
 			containerRegistry.RegisterForNavigation<LoadingPage>();
 			containerRegistry.RegisterForNavigation<LoginPage>();
 			containerRegistry.RegisterForNavigation<MainPage>();
+			containerRegistry.RegisterForNavigation<NavigationPage>();
 			containerRegistry.Register<LoginPageViewModel>();
 			containerRegistry.Register<MainPageViewModel>();
+			containerRegistry.Register<SmartLightCache>();
 		}
 
 		private async Task NavigateToRootPageAsync()
@@ -88,7 +92,7 @@ namespace SmartHome
 			{
 				if (await IsLoggedInAsync())
 				{
-					await NavigationService.NavigateAsync("/" + nameof(Views.MainPage));
+					await NavigationService.NavigateAsync("/" + nameof(NavigationPage) + "/" + nameof(Views.MainPage));
 				}
 				else
 				{

@@ -19,6 +19,8 @@ namespace SmartHome.ViewModels
 		private readonly Lazy<INavigationService> _navigation;
 		private readonly Lazy<IPageDialogService> _dialogService;
 
+		private ICommand _loginCommand;
+
 		public LoginPageViewModel(Lazy<ISengledClient> sengledClient, Lazy<IKeyStore> keyStore, Lazy<INavigationService> navigation, Lazy<IPageDialogService> dialogService)
 		{
 			_sengledClient = sengledClient;
@@ -26,8 +28,6 @@ namespace SmartHome.ViewModels
 			_navigation = navigation;
 			_dialogService = dialogService;
 		}
-
-		private ICommand _loginCommand;
 
 		public string UserName
 		{

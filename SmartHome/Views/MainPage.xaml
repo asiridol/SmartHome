@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<local:ProgressAwarePage 
+<local:ProgressAwareViewModelPage 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     xmlns:local="clr-namespace:SmartHome.Views;assembly:SmartHome" 
@@ -8,12 +8,14 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
     xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
     ios:Page.UseSafeArea="true"
+    x:TypeArguments="vm:MainPageViewModel"
     x:Class="SmartHome.Views.MainPage"
     prism:ViewModelLocator.AutowireViewModel="True"
-    ShowProgress="{Binding IsBusy}">
+    ShowProgress="{Binding IsBusy}" 
+    Title="Rooms">
     <ContentPage.Content>
         <Grid>
             <Label Text="Main page "/>
             </Grid>
     </ContentPage.Content>
-</local:ProgressAwarePage>
+</local:ProgressAwareViewModelPage>

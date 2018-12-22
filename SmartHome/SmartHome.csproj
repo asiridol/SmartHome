@@ -8,11 +8,14 @@
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="3.3.0.967583" />
+        <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
         <PackageReference Include="Prism.DryIoc.Forms" Version="7.1.0.431" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
         <PackageReference Include="Xfx.Controls" Version="1.1.3" />
         <PackageReference Include="akavache" Version="6.0.31" />
+        <PackageReference Include="Realm.Database" Version="3.3.0" />
+        <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+        <PackageReference Include="Fody" Version="3.3.3" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Views\" />
@@ -26,6 +29,7 @@
         <Folder Include="Services\SmartLight\" />
         <Folder Include="Services\Cache\" />
         <Folder Include="Behaviors\" />
+        <Folder Include="Extensions\" />
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="BootloaderBase.cs" />
