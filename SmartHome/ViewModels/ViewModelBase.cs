@@ -13,7 +13,7 @@ namespace SmartHome.ViewModels
 		{
 		}
 
-		protected void RaisePropertyChanged(string nameOfProperty)
+		protected virtual void RaisePropertyChanged(string nameOfProperty)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameOfProperty));
 		}

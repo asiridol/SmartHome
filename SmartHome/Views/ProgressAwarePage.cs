@@ -16,23 +16,13 @@ namespace SmartHome.Views
 		}
 	}
 
-	public abstract class ProgressAwareViewModelPage<T> : ContentPage where T : ViewModelBase
+	public abstract class ProgressAwareViewModelPage<T> : ProgressAwarePage where T : ViewModelBase
 	{
-		public static BindableProperty ShowProgressProperty = BindableProperty.Create(nameof(ShowProgress), typeof(bool), typeof(ProgressAwarePage), null, BindingMode.OneWay);
-
 		protected T ViewModel
 		{
 			get
 			{
 				return BindingContext as T;
-			}
-		}
-
-		public bool ShowProgress
-		{
-			get
-			{
-				return (bool)GetValue(ShowProgressProperty);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using DryIoc;
 using Prism;
@@ -13,6 +13,11 @@ using Xamarin.Forms.Xaml;
 using System.Threading;
 using Prism.Navigation;
 using System.Linq;
+using Akavache;
+using SmartHome.Services.Cache;
+using MQTTnet.Client;
+using MQTTnet.Server;
+using SmartHome.Services.Network.Mqtt;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace SmartHome
@@ -58,14 +63,19 @@ namespace SmartHome
 		{
 			var container = containerRegistry.GetContainer();
 
-			//container.RegisterType<LoginPageViewModel>();
+			// services
 			container.Register<ISengledClient, SengledClient>();
 			container.Register<IObjectBlobCache, RealmBackedCacheStore>(setup: Setup.With(allowDisposableTransient: true));
 			container.Register<ISmartLightCache, SmartLightCache>();
+			container.Register<IMqttService, MqttService>(setup: Setup.With(allowDisposableTransient: true));
+
+			// navigation
 			containerRegistry.RegisterForNavigation<LoadingPage>();
 			containerRegistry.RegisterForNavigation<LoginPage>();
 			containerRegistry.RegisterForNavigation<MainPage>();
 			containerRegistry.RegisterForNavigation<NavigationPage>();
+
+			// viewmodels
 			containerRegistry.Register<LoginPageViewModel>();
 			containerRegistry.Register<MainPageViewModel>();
 			containerRegistry.Register<SmartLightCache>();
@@ -73,15 +83,6 @@ namespace SmartHome
 
 		private async Task NavigateToRootPageAsync()
 		{
-			//if (Device.Idiom == TargetIdiom.Phone)
-			//{
-			//	await NavigationService.NavigateAsync(nameof(NavigationPage) + "/" + nameof(LoginPage));
-			//}
-			//else
-			//{
-			//	await NavigationService.NavigateAsync("/" + nameof(LoginPage));
-			//}
-
 			if (Interlocked.CompareExchange(ref _threadLock, 0, 1) != 0)
 			{
 				// already in progress

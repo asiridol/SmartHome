@@ -14,7 +14,6 @@ namespace SmartHome.ViewModels
 			set
 			{
 				Set(() => IsBusy, ref _isBusy, value);
-				//RaisePropertyChanged(nameof(Progress));
 			}
 		}
 	}

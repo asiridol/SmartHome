@@ -1,4 +1,5 @@
-﻿using SmartHome.ViewModels;
+﻿using System;
+using SmartHome.ViewModels;
 using Xamarin.Forms.Xaml;
 
 namespace SmartHome.Views
