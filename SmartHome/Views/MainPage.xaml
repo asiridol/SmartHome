@@ -7,6 +7,8 @@
     xmlns:vm="clr-namespace:SmartHome.ViewModels;assembly=SmartHome"
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
     xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    xmlns:viewcell="clr-namespace:SmartHome.Controls;assembly=SmartHome"
+    xmlns:b="clr-namespace:SmartHome.Behaviors;assembly=SmartHome"
     ios:Page.UseSafeArea="true"
     x:TypeArguments="vm:MainPageViewModel"
     x:Class="SmartHome.Views.MainPage"
@@ -14,8 +16,14 @@
     ShowProgress="{Binding IsBusy}" 
     Title="Rooms">
     <ContentPage.Content>
-        <Grid>
-            <Label Text="Main page "/>
-            </Grid>
+        <ListView x:Name="RoomsList" ItemsSource="{Binding Rooms}" IsPullToRefreshEnabled="true" RefreshCommand="{Binding RefreshRoomsCommand}" IsRefreshing="{Binding IsBusy}" RowHeight="200">
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <viewcell:SelectableViewCell SelectedBackgroundColor="DarkSalmon">
+                <Label Text="{Binding RoomName}" VerticalOptions="Center" HorizontalOptions="FillAndExpand" Margin="20,0,0,0"/>
+              </viewcell:SelectableViewCell>
+            </DataTemplate>                    
+          </ListView.ItemTemplate>   
+        </ListView>
     </ContentPage.Content>
 </local:ProgressAwareViewModelPage>

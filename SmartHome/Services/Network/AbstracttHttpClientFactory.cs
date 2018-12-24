@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace SmartHome.Services.Network
 {
@@ -30,8 +31,9 @@ namespace SmartHome.Services.Network
 					Timeout = TimeSpan.FromSeconds(DefaultTimeOut),
 				};
 
-				_sharedClient.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true };
-				_sharedClient.DefaultRequestHeaders.AcceptEncoding.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue(GzipAcceptHeader));
+
+				_sharedClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
+				_sharedClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue(GzipAcceptHeader));
 			}
 
 			return _sharedClient;

@@ -12,7 +12,7 @@ namespace SmartHome.Services.Network
 	{
 		private const string AuthenticateUrl = "https://ucenter.cloud.sengled.com/user/app/customer/v2/AuthenCross.json";
 		private const string IsSessionTimeoutUrl = "https://ucenter.cloud.sengled.com/user/app/customer/isSessionTimeout.json";
-		private const string DevicesListUrl = "https://life2.cloud.sengled.com/life2/device/list.json";
+		private const string DevicesListUrl = "https://elements.cloud.sengled.com/zigbee/device/getDeviceDetails.json";
 		private const string RoomsListurl = "https://life2.cloud.sengled.com/life2/room/list.json";
 
 		private const string CookieHeaderKey = "Cookie";
@@ -72,14 +72,16 @@ namespace SmartHome.Services.Network
 			};
 		}
 
-		public Task GetDeviceDetailsAsync()
+		public Task<DevicesInfoResponse> GetDeviceDetailsAsync(string sessionId)
 		{
-			return GetDeviceDetailsAsync(CancellationToken.None);
+			return GetDeviceDetailsAsync(sessionId, CancellationToken.None);
 		}
 
-		public Task GetDeviceDetailsAsync(CancellationToken token)
+		public async Task<DevicesInfoResponse> GetDeviceDetailsAsync(string sessionId, CancellationToken token)
 		{
-			throw new NotImplementedException();
+			var headers = GetHeaders(sessionId);
+			var request = new JsonRequest<DevicesInfoResponse>(headers);
+			return await request.SendRequestAsync(HttpMethod.Post, new Uri(DevicesListUrl), token);
 		}
 
 		public Task GetDevicesListAsync()

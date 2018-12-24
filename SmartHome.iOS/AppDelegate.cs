@@ -7,6 +7,7 @@ using UIKit;
 using Xfx;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace SmartHome.iOS
 {
@@ -36,8 +37,8 @@ namespace SmartHome.iOS
 		{
 			try
 			{
-				XfxControls.Init();
-				Xamarin.Forms.Forms.Init();
+				Xfx.XfxControls.Init();
+				Forms.Init();
 				LoadApplication(new App(new IosPlatformInitializer()));
 			}
 			finally

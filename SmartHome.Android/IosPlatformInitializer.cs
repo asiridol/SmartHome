@@ -1,8 +1,6 @@
 ﻿using System;
 using Prism;
 using Prism.Ioc;
-using Prism.Autofac;
-using Autofac;
 using SmartHome.Droid.Services.Network;
 using SmartHome.Services.Network;
 

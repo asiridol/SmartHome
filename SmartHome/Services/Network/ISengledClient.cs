@@ -19,7 +19,7 @@ namespace SmartHome.Services.Network
 		Task<RoomsResponse> GetRoomsInfoAsync(string sessionId);
 		Task<RoomsResponse> GetRoomsInfoAsync(string sessionId, CancellationToken token);
 
-		Task GetDevicesListAsync();
-		Task GetDevicesListAsync(CancellationToken token);
+		Task<DevicesInfoResponse> GetDeviceDetailsAsync(string sessionId);
+		Task<DevicesInfoResponse> GetDeviceDetailsAsync(string sessionId, CancellationToken token);
 	}
 }

@@ -5,6 +5,8 @@ using SmartHome.iOS.Services.KeyStore;
 using SmartHome.iOS.Services.Network;
 using SmartHome.Services.KeyStore;
 using SmartHome.Services.Network;
+using SmartHome.Services.FileSystem;
+using SmartHome.iOS.Services.FileSystem;
 
 namespace SmartHome.iOS
 {
@@ -14,6 +16,7 @@ namespace SmartHome.iOS
 		{
 			containerRegistry.Register<IKeyStore, IosKeyStore>();
 			containerRegistry.Register<IHttpClientFactory, IosHttpClientFactory>();
+			containerRegistry.Register<IFilePaths, IosFilePaths>();
 		}
 	}
 }
