@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SmartHome.Services.Network.Models
 {
-	public class IsSessionTimeOutRequest
+	public class TokenRefreshRequest
 	{
 		[JsonProperty("uuid")] public string Uuid { get; set; }
 		[JsonProperty("osType")] public string OsType { get; set; }

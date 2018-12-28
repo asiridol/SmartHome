@@ -49,7 +49,7 @@ namespace SmartHome.Services.Network
 
 		public async Task<bool> IsSessionTimeOutAsync(string sessionId, string guid, CancellationToken token)
 		{
-			var requestBody = new IsSessionTimeOutRequest
+			var requestBody = new TokenRefreshRequest
 			{
 				Uuid = guid,
 				OsType = "android",
@@ -81,7 +81,14 @@ namespace SmartHome.Services.Network
 		{
 			var headers = GetHeaders(sessionId);
 			var request = new JsonRequest<DevicesInfoResponse>(headers);
-			return await request.SendRequestAsync(HttpMethod.Post, new Uri(DevicesListUrl), token);
+			try
+			{
+				return await request.SendRequestAsync(HttpMethod.Post, new Uri(DevicesListUrl), token);
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 		}
 
 		public Task GetDevicesListAsync()

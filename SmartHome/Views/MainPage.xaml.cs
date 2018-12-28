@@ -18,12 +18,19 @@ namespace SmartHome.Views
 		{
 			ViewModel.InitCommand.Execute();
 			RoomsList.ItemSelected += RoomSelected;
+			ViewModel.ClearSelection += ClearRoomSelection;
 			base.OnAppearing();
+		}
+
+		private void ClearRoomSelection(object sender, EventArgs e)
+		{
+			RoomsList.SelectedItem = null;
 		}
 
 		protected override void OnDisappearing()
 		{
 			RoomsList.ItemSelected -= RoomSelected;
+			ViewModel.ClearSelection -= ClearRoomSelection;
 			base.OnDisappearing();
 		}
 

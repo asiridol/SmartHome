@@ -41,7 +41,19 @@ namespace SmartHome.Services.Cache
 		public async Task<DevicesInfoResponse> GetDeviceInfoAsync()
 		{
 			var sessionId = await _keyStore.Value.GetValueForKeyAsync<string>(KeyStoreKeys.JSessionId);
-			return await BlobCache.LocalMachine.GetOrFetchObject(DeviceInfoCacheKey, async () => await _sengledClient.Value.GetDeviceDetailsAsync(sessionId), DateTimeOffset.UtcNow.Add(_expiration));
+			return await BlobCache.LocalMachine.GetOrFetchObject(DeviceInfoCacheKey, async () => await _sengledClient.Value.GetDeviceDetailsAsync(sessionId), DateTimeOffset.UtcNow.Add(TimeSpan.FromHours(1)));
+		}
+
+		public async Task ClearDeviceInfoAsync()
+		{
+			try
+			{
+				await BlobCache.LocalMachine.InvalidateObject<DevicesInfoResponse>(DeviceInfoCacheKey);
+			}
+			catch
+			{
+				// do nothing
+			}
 		}
 	}
 }

@@ -1,52 +1,67 @@
 ﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Forms;
-using SmartHome.Services.SmartLight;
-using SmartHome.Services.Cache;
-using System.Collections;
-using SmartHome.Services.Network.Models;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using SmartHome.Services.Network.Mqtt;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using SmartHome.Services.Cache;
 using SmartHome.Services.KeyStore;
+using SmartHome.Services.Network.Models;
+using SmartHome.Services.Network.Mqtt;
+using Xamarin.Forms;
+using SmartHome.Services.SmartLight;
+using System.ComponentModel;
 
 namespace SmartHome.ViewModels
 {
 	public class MainPageViewModel : ProgressAwareViewModel
 	{
 		private readonly Lazy<ISmartLightCache> _cache;
-		private readonly Lazy<IMqttService> _mqttClient;
-		private readonly Lazy<IKeyStore> _keyStore;
+		private readonly Lazy<ISmartLightService> _smartLightService;
 
 		private ICommand _initCommand;
 		private ICommand _refreshRoomsCommand;
-		private Command<Room> _roomSelectedCommand;
+		private Command<RoomViewModel> _roomSelectedCommand;
 
-		private string _hubId;
-		private string _jToken;
+		private ObservableCollection<RoomViewModel> _rooms = new ObservableCollection<RoomViewModel>();
 
-		private ObservableCollection<Room> _rooms = new ObservableCollection<Room>();
-
-		public MainPageViewModel(Lazy<ISmartLightCache> cache, Lazy<IMqttService> mqttClient, Lazy<IKeyStore> keyStore)
+		public MainPageViewModel(Lazy<ISmartLightCache> cache, Lazy<ISmartLightService> smartLightService)
 		{
 			_cache = cache;
-			_mqttClient = mqttClient;
-			_keyStore = keyStore;
+			_smartLightService = smartLightService;
 		}
 
-		public ObservableCollection<Room> Rooms => _rooms;
+		public event EventHandler ClearSelection;
+
+		public ObservableCollection<RoomViewModel> Rooms => _rooms;
 
 		public ICommand InitCommand => _initCommand ?? (_initCommand = new Command(async () => await DoInitAsync()));
 		public ICommand RefreshRoomsCommand => _refreshRoomsCommand ?? (_refreshRoomsCommand = new Command(async () => await DoRefreshAsync()));
-		public Command<Room> RoomSelectedCommand => _roomSelectedCommand ?? (_roomSelectedCommand = new Command<Room>(async (room) => await RoomSelectedAsync(room)));
+		public Command<RoomViewModel> RoomSelectedCommand => _roomSelectedCommand ?? (_roomSelectedCommand = new Command<RoomViewModel>(async (room) => await RoomSelectedAsync(room)));
 
-		private Task RoomSelectedAsync(Room room)
+		private async Task RoomSelectedAsync(RoomViewModel room)
 		{
-			System.Diagnostics.Debug.WriteLine("Room: " + room.RoomId);
+			if (room == null)
+			{
+				return;
+			}
 
-			return Task.CompletedTask;
+			if (room.IsOn == null)
+			{
+				return;
+			}
+
+			if (room.IsOn.GetValueOrDefault())
+			{
+				await _smartLightService.Value.TurnOffRoomAsync(room.RoomId);
+			}
+			else
+			{
+				await _smartLightService.Value.TurnOnRoomAsync(room.RoomId);
+			}
+			var updatedRoom = Rooms.FirstOrDefault(x => x == room);
+			updatedRoom.IsOn = !updatedRoom.IsOn;
+
+			ClearSelection?.Invoke(this, EventArgs.Empty);
 		}
 
 		private Task DoRefreshAsync()
@@ -56,20 +71,7 @@ namespace SmartHome.ViewModels
 
 		private async Task DoInitAsync()
 		{
-			await Task.WhenAll(LoadRoomsAsync(false), LoadHubIdAsync());
-		}
-
-		private async Task LoadHubIdAsync()
-		{
-			_jToken = await _keyStore.Value.GetValueForKeyAsync<string>(KeyStoreKeys.JSessionId);
-			var devicesResponse = await _cache.Value.GetDeviceInfoAsync();
-
-			if (devicesResponse != null)
-			{
-				_hubId = devicesResponse.DeviceInfos.FirstOrDefault().GatewayUuid;
-			}
-
-			await _mqttClient.Value.StartAsync(_jToken, _hubId);
+			await LoadRoomsAsync(false);
 		}
 
 		private async Task LoadRoomsAsync(bool forced)
@@ -80,16 +82,26 @@ namespace SmartHome.ViewModels
 				var cachedResponse = await _cache.Value.GetRoomsAsync(forced);
 				Rooms.Clear();
 
-				var rooms = cachedResponse.Rooms.Distinct().Where(x => x.DeviceList.Any()).OrderByDescending(x => x.RoomOrder);
+				var defaultRoom = cachedResponse.Rooms.FirstOrDefault(x => x.RoomName == "DefaultRoom");
+				var rooms = cachedResponse.Rooms.Except(new[] { defaultRoom }).Where(x => x.DeviceList.Any()).OrderByDescending(x => x.RoomOrder);
 
 				foreach (var room in rooms)
 				{
-					Rooms.Add(room);
+					var roomStatus = await _smartLightService.Value.GetRoomStatusAsync(room.RoomId);
+
+					var roomVm = new RoomViewModel
+					{
+						RoomId = room.RoomId,
+						RoomName = room.RoomName,
+						IsOn = roomStatus,
+						Devices = room.DeviceList
+					};
+
+					Rooms.Add(roomVm);
 				}
 			}
 			finally
 			{
-
 				IsBusy = false;
 			}
 		}

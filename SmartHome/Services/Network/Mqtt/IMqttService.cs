@@ -5,6 +5,7 @@ namespace SmartHome.Services.Network.Mqtt
 {
 	public interface IMqttService
 	{
-		Task StartAsync(string jSessionToken, string hubId);
+		Task StartAsync(string jSessionToken, string hubId, string username);
+		Task<bool> SendMessageAsync(MqttMessage message);
 	}
 }

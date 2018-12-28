@@ -18,6 +18,7 @@ using SmartHome.Services.Cache;
 using MQTTnet.Client;
 using MQTTnet.Server;
 using SmartHome.Services.Network.Mqtt;
+using SmartHome.Services.SmartLight;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace SmartHome
@@ -68,6 +69,7 @@ namespace SmartHome
 			container.Register<IObjectBlobCache, RealmBackedCacheStore>(setup: Setup.With(allowDisposableTransient: true));
 			container.Register<ISmartLightCache, SmartLightCache>();
 			container.Register<IMqttService, MqttService>(setup: Setup.With(allowDisposableTransient: true));
+			container.Register<ISmartLightService, SmartLightService>();
 
 			// navigation
 			containerRegistry.RegisterForNavigation<LoadingPage>();

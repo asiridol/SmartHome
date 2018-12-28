@@ -7,5 +7,6 @@ namespace SmartHome.Services.Cache
 	{
 		Task<RoomsResponse> GetRoomsAsync(bool forced = false);
 		Task<DevicesInfoResponse> GetDeviceInfoAsync();
+		Task ClearDeviceInfoAsync();
 	}
 }

@@ -8,6 +8,7 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" 
     xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
     xmlns:viewcell="clr-namespace:SmartHome.Controls;assembly=SmartHome"
+    xmlns:converters="clr-namespace:SmartHome.Converters;assembly=SmartHome"
     xmlns:b="clr-namespace:SmartHome.Behaviors;assembly=SmartHome"
     ios:Page.UseSafeArea="true"
     x:TypeArguments="vm:MainPageViewModel"
@@ -15,12 +16,30 @@
     prism:ViewModelLocator.AutowireViewModel="True"
     ShowProgress="{Binding IsBusy}" 
     Title="Rooms">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColor"></converters:BoolToColorConverter>
+            <converters:BoolToOnOffConverter x:Key="BoolToOnOff"></converters:BoolToOnOffConverter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <ListView x:Name="RoomsList" ItemsSource="{Binding Rooms}" IsPullToRefreshEnabled="true" RefreshCommand="{Binding RefreshRoomsCommand}" IsRefreshing="{Binding IsBusy}" RowHeight="200">
+        <ListView x:Name="RoomsList" ItemsSource="{Binding Rooms}" IsPullToRefreshEnabled="true" RefreshCommand="{Binding RefreshRoomsCommand}" IsRefreshing="{Binding IsBusy}" RowHeight="200" SeparatorColor="Black" SelectionMode="Single">
           <ListView.ItemTemplate>
             <DataTemplate>
-              <viewcell:SelectableViewCell SelectedBackgroundColor="DarkSalmon">
-                <Label Text="{Binding RoomName}" VerticalOptions="Center" HorizontalOptions="FillAndExpand" Margin="20,0,0,0"/>
+              <viewcell:SelectableViewCell SelectedBackgroundColor="LightGray">
+                <RelativeLayout HeightRequest="30" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                        <Label x:Name="roomName" Text="{Binding RoomName}"
+                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=.5,Constant=0}"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1,Constant=0}" Margin="20,0,20,0"/>
+                        <BoxView x:Name="onStatus" BackgroundColor="{Binding IsOn, Converter={StaticResource BoolToColor}" CornerRadius="5" BindingContext=""
+                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=.5,Constant=-5}"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToView, Property=Width, ElementName=roomStatus, Factor=1, Constant=10}"
+                           RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToView, Property=Height, ElementName=roomStatus, Factor=1, Constant=10}"
+                           RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, Property=X, ElementName=roomStatus, Factor=1, Constant=-5}"/>
+                        <Label x:Name="roomStatus" Text="{Binding IsOn, Converter={StaticResource BoolToOnOff}"
+                          RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=.5,Constant=0}"
+                          RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,  Property=Width, Factor=1, Constant=-50}"/>
+                </RelativeLayout>
               </viewcell:SelectableViewCell>
             </DataTemplate>                    
           </ListView.ItemTemplate>   

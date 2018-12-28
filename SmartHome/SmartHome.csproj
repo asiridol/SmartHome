@@ -35,6 +35,7 @@
         <Folder Include="Controls\" />
         <Folder Include="Services\Network\Mqtt\" />
         <Folder Include="Converters\" />
+        <Folder Include="Services\Network\Converters\" />
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="BootloaderBase.cs" />

@@ -5,6 +5,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
+using MQTTnet.Client.Connecting;
 
 namespace SmartHome.Services.Network.Mqtt
 {
@@ -25,6 +26,7 @@ namespace SmartHome.Services.Network.Mqtt
 					_client = factory.CreateMqttClient();
 
 					_client.ApplicationMessageReceived += MessageReceived;
+					_client.Connected += Connected;
 					_client.Disconnected += Disconnected;
 				}
 
@@ -32,7 +34,7 @@ namespace SmartHome.Services.Network.Mqtt
 			}
 		}
 
-		public async Task StartAsync(string jSessionToken, string hubId)// string userName, string hubId)
+		public async Task StartAsync(string jSessionToken, string userName, string hubId)
 		{
 			if (Client.IsConnected)
 			{
@@ -40,12 +42,14 @@ namespace SmartHome.Services.Network.Mqtt
 			}
 
 			var clientId = string.Format(ClientIdPattern, jSessionToken);
-			var options = new MqttClientOptionsBuilder().WithClientId(clientId).WithWebSocketServer(WebSocketEndpoint).WithTls().WithCleanSession().Build();
+			var options = new MqttClientOptionsBuilder().WithClientId(clientId).WithWebSocketServer(WebSocketEndpoint).WithTls().WithCleanSession().WithKeepAlivePeriod(TimeSpan.FromHours(10)).Build();
 
 			await Client.ConnectAsync(options);
 
-			await Client.SubscribeAsync($"element/{hubId}/status");
-			//await Client.SubscribeAsync($"ucenter/{userName}/action");
+			await Task.WhenAll(
+				Client.SubscribeAsync($"element/{hubId}/status"),
+				Client.SubscribeAsync($"ucenter/{userName}/action")
+			);
 		}
 
 		private void Disconnected(object sender, MqttClientDisconnectedEventArgs e)
@@ -53,19 +57,25 @@ namespace SmartHome.Services.Network.Mqtt
 			System.Diagnostics.Debug.WriteLine("Disconnected");
 		}
 
-		private double ToUnixTime(DateTime date)
+		private void Connected(object sender, MqttClientConnectedEventArgs e)
 		{
-			var epoch = Math.Round((date - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds, 0);
-			return epoch;
+			System.Diagnostics.Debug.WriteLine("Connected");
 		}
 
 		private void MessageReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-			System.Diagnostics.Debug.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-			System.Diagnostics.Debug.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-			System.Diagnostics.Debug.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-			System.Diagnostics.Debug.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
+			var mqttMessage = new MqttMessage
+			{
+				Topic = e.ApplicationMessage.Topic,
+				Payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload)
+			};
+		}
+
+		public async Task<bool> SendMessageAsync(MqttMessage message)
+		{
+			var mqttAppmessage = new MqttApplicationMessageBuilder().WithTopic(message.Topic).WithPayload(message.Payload).WithExactlyOnceQoS().Build();
+			var result = await Client.PublishAsync(mqttAppmessage);
+			return result.ReasonCode == MQTTnet.Client.Publishing.MqttClientPublishReasonCode.Success;
 		}
 	}
 }
