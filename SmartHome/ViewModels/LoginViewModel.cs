@@ -83,7 +83,7 @@ namespace SmartHome.ViewModels
 					var tasks = new[]{
 						_keyStore.Value.SaveKeyValueAsync(KeyStoreKeys.JSessionId, sessionid),
 						_keyStore.Value.SaveKeyValueAsync(KeyStoreKeys.UniqueDeviceId, guid),
-						_keyStore.Value.SaveKeyValueAsync(KeyStoreKeys.Username, UserName)
+						_keyStore.Value.SaveKeyValueAsync(KeyStoreKeys.Username, UserName.Property)
 					};
 
 					success = (await Task.WhenAll(tasks)).All(x => x);

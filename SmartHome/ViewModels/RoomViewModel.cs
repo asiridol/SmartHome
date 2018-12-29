@@ -11,6 +11,7 @@ namespace SmartHome.ViewModels
 
 		public string RoomName { get; set; }
 		public long RoomId { get; set; }
+
 		public bool? IsOn
 		{
 			get => _isOn;
@@ -19,6 +20,7 @@ namespace SmartHome.ViewModels
 				Set(() => IsOn, ref _isOn, value);
 			}
 		}
+
 		public List<string> Devices { get; set; }
 	}
 }

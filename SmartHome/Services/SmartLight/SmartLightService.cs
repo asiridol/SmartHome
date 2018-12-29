@@ -69,8 +69,9 @@ namespace SmartHome.Services.SmartLight
 
 				await _mqttService.Value.StartAsync(jToken, _hubId, userName);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
+				// ignored
 			}
 			finally
 			{

@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Globalization;
 using Xamarin.Forms;
-
 namespace SmartHome.Converters
 {
-	public class BoolToColorConverter : IValueConverter
+	public class BoolToInverseColorConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value == null)
 			{
-				return Color.Red;
+				return Color.White;
 			}
 
 			if (value is bool booleanValue)
 			{
-				return booleanValue ? Color.Yellow : Color.LightGreen;
+				return booleanValue ? Color.Black : Color.White;
 			}
 
-			return Color.Red;
+			return Color.White;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

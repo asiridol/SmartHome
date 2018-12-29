@@ -18,8 +18,10 @@
     Title="Rooms">
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:BoolToColorConverter x:Key="BoolToColor"></converters:BoolToColorConverter>
-            <converters:BoolToOnOffConverter x:Key="BoolToOnOff"></converters:BoolToOnOffConverter>
+            <converters:BoolToColorConverter x:Key="BoolToColor"/>
+            <converters:BoolToOnOffConverter x:Key="BoolToOnOff"/>
+            <converters:ListOfStringsToStringConverter x:Key="ListOfStringsToString"/>
+            <converters:BoolToInverseColorConverter x:Key="BoolToInverseColor"/>
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
@@ -27,16 +29,24 @@
           <ListView.ItemTemplate>
             <DataTemplate>
               <viewcell:SelectableViewCell SelectedBackgroundColor="LightGray">
-                <RelativeLayout HeightRequest="30" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                <RelativeLayout HeightRequest="30" HorizontalOptions="FillAndExpand">
                         <Label x:Name="roomName" Text="{Binding RoomName}"
-                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=.5,Constant=0}"
+                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=.5,Constant=-10}"
                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1,Constant=0}" Margin="20,0,20,0"/>
-                        <BoxView x:Name="onStatus" BackgroundColor="{Binding IsOn, Converter={StaticResource BoolToColor}" CornerRadius="5" BindingContext=""
+                        <Label x:Name="roomDevices" Text="{Binding Devices} Converter={StaticResource ListOfStringsToString}" FontSize="Small"
+                                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView,ElementName=roomName, Property=Y,Factor=1,Constant=20}"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1,Constant=0}" Margin="20,0,20,0"/>
+                        <BoxView x:Name="onStatusShadow" BackgroundColor="Black" CornerRadius="5" Opacity="0.5"
+                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView,  Property=Y, ElementName=onStatus, Factor=1,Constant=-2}"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToView, Property=Width, ElementName=onStatus, Factor=1, Constant=4}"
+                           RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToView, Property=Height, ElementName=onStatus, Factor=1, Constant=4}"
+                           RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, Property=X, ElementName=onStatus, Factor=1, Constant=-2}"/>
+                        <BoxView x:Name="onStatus" BackgroundColor="{Binding IsOn, Converter={StaticResource BoolToColor}" CornerRadius="5" 
                            RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=.5,Constant=-5}"
                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToView, Property=Width, ElementName=roomStatus, Factor=1, Constant=10}"
                            RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToView, Property=Height, ElementName=roomStatus, Factor=1, Constant=10}"
                            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, Property=X, ElementName=roomStatus, Factor=1, Constant=-5}"/>
-                        <Label x:Name="roomStatus" Text="{Binding IsOn, Converter={StaticResource BoolToOnOff}"
+                        <Label x:Name="roomStatus" Text="{Binding IsOn, Converter={StaticResource BoolToOnOff}" TextColor="{Binding IsOn, Converter={StaticResource BoolToInverseColor}"
                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=.5,Constant=0}"
                           RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,  Property=Width, Factor=1, Constant=-50}"/>
                 </RelativeLayout>

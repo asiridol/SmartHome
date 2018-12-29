@@ -6,6 +6,7 @@ using MQTTnet.Client;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
 using MQTTnet.Client.Connecting;
+using Xamarin.Forms;
 
 namespace SmartHome.Services.Network.Mqtt
 {
@@ -13,6 +14,8 @@ namespace SmartHome.Services.Network.Mqtt
 	{
 		private const string WebSocketEndpoint = "wss://ap-mqtt.cloud.sengled.com:443/mqtt";
 		private const string ClientIdPattern = "{0}@elementapp";
+
+		public static string MqttMessageId = "mqtt.message";
 
 		private IMqttClient _client;
 
@@ -34,7 +37,7 @@ namespace SmartHome.Services.Network.Mqtt
 			}
 		}
 
-		public async Task StartAsync(string jSessionToken, string userName, string hubId)
+		public async Task StartAsync(string jSessionToken, string hubId, string userName)
 		{
 			if (Client.IsConnected)
 			{
@@ -42,14 +45,14 @@ namespace SmartHome.Services.Network.Mqtt
 			}
 
 			var clientId = string.Format(ClientIdPattern, jSessionToken);
-			var options = new MqttClientOptionsBuilder().WithClientId(clientId).WithWebSocketServer(WebSocketEndpoint).WithTls().WithCleanSession().WithKeepAlivePeriod(TimeSpan.FromHours(10)).Build();
+			var options = new MqttClientOptionsBuilder().WithClientId(clientId).WithWebSocketServer(WebSocketEndpoint).WithTls().WithCleanSession().Build();
 
 			await Client.ConnectAsync(options);
 
-			await Task.WhenAll(
-				Client.SubscribeAsync($"element/{hubId}/status"),
-				Client.SubscribeAsync($"ucenter/{userName}/action")
-			);
+			var hubTopic = $"element/{hubId}/status";
+			await Client.SubscribeAsync(hubTopic);
+			var userTopic = $"ucenter/{userName}/action";
+			await Client.SubscribeAsync(userTopic);
 		}
 
 		private void Disconnected(object sender, MqttClientDisconnectedEventArgs e)
@@ -64,11 +67,19 @@ namespace SmartHome.Services.Network.Mqtt
 
 		private void MessageReceived(object sender, MqttApplicationMessageReceivedEventArgs e)
 		{
+			System.Diagnostics.Debug.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
+			System.Diagnostics.Debug.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
+			System.Diagnostics.Debug.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+			System.Diagnostics.Debug.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
+			System.Diagnostics.Debug.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
+
 			var mqttMessage = new MqttMessage
 			{
 				Topic = e.ApplicationMessage.Topic,
 				Payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload)
 			};
+
+			MessagingCenter.Instance.Send<IMqttService, MqttMessage>(this, MqttMessageId, mqttMessage);
 		}
 
 		public async Task<bool> SendMessageAsync(MqttMessage message)

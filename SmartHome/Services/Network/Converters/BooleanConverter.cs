@@ -12,6 +12,7 @@ namespace SmartHome.Services.Network.Converters
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
 			var value = reader.Value;
+
 			if (value == null || string.IsNullOrEmpty(value.ToString()))
 			{
 				return false;

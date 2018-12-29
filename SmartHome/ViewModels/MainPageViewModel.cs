@@ -10,6 +10,8 @@ using SmartHome.Services.Network.Mqtt;
 using Xamarin.Forms;
 using SmartHome.Services.SmartLight;
 using System.ComponentModel;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SmartHome.ViewModels
 {
@@ -28,6 +30,8 @@ namespace SmartHome.ViewModels
 		{
 			_cache = cache;
 			_smartLightService = smartLightService;
+
+			MessagingCenter.Instance.Subscribe<IMqttService, MqttMessage>(this, MqttService.MqttMessageId, OnMessageReceived);
 		}
 
 		public event EventHandler ClearSelection;
@@ -58,8 +62,8 @@ namespace SmartHome.ViewModels
 			{
 				await _smartLightService.Value.TurnOnRoomAsync(room.RoomId);
 			}
-			var updatedRoom = Rooms.FirstOrDefault(x => x == room);
-			updatedRoom.IsOn = !updatedRoom.IsOn;
+
+			room.IsOn = !room.IsOn;
 
 			ClearSelection?.Invoke(this, EventArgs.Empty);
 		}
@@ -79,6 +83,12 @@ namespace SmartHome.ViewModels
 			try
 			{
 				IsBusy = true;
+
+				if (forced)
+				{
+					await _cache.Value.ClearDeviceInfoAsync();
+				}
+
 				var cachedResponse = await _cache.Value.GetRoomsAsync(forced);
 				Rooms.Clear();
 
@@ -103,6 +113,29 @@ namespace SmartHome.ViewModels
 			finally
 			{
 				IsBusy = false;
+			}
+		}
+
+		private void OnMessageReceived(IMqttService arg1, MqttMessage message)
+		{
+			if (message == null || string.IsNullOrEmpty(message.Payload))
+			{
+				return;
+			}
+
+			var deserialized = JsonConvert.DeserializeObject<List<DeviceStatus>>(message.Payload);
+			var onOff = deserialized.FirstOrDefault(x => x.Type == "onOff");
+			var onlineStatus = deserialized.FirstOrDefault(x => x.Type == "isOnline");
+			var device = onOff.Dn;
+			var room = Rooms.FirstOrDefault(x => x.Devices.Contains(device));
+
+			if (onlineStatus != null && !onlineStatus.Value)
+			{
+				room.IsOn = null;
+			}
+			else
+			{
+				room.IsOn = onOff.Value;
 			}
 		}
 	}
